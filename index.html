@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABCD Game for Kids</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f8ff;
+            overflow-y: hidden;
+        }
+
+        .game-container {
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            height: 100vh;
+            padding-top: 30px;
+            width: 100%;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .letter-display{
+            margin-top: 70px;
+        }
+
+        .letter-display h2 {
+            font-size: 120px;
+            margin: 0;
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+        }
+
+        .letter-display p {
+            font-size: 24px;
+            margin-top: 10px;
+            opacity: 0;
+            animation: fadeIn 1s forwards 0.3s;
+        }
+
+        .letter-display img {
+            width: 220px;
+            height: 220px;
+            margin-top: 20px;
+            opacity: 0;
+            animation: fadeIn 1s forwards 0.5s;
+            object-fit: cover;
+            animation: fadeIn 1s forwards 0.5s;
+            /* Box shadow for the image */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: absolute;
+            bottom: 10px;
+            left: 5px;
+        }
+
+        .controls button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #eee;
+            color: rgb(27, 26, 26);
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .controls button:hover {
+            background-color: #ccc;
+        }
+
+        /* Flex for total letters */
+        .total-letters {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .total-letters p {
+            font-size: 24px;
+            margin: 0 10px;
+            animation: fadeIn 1s forwards;
+        }
+
+        .back{
+            position: absolute;
+            top: 50px;
+            left: 20px;
+            padding: 10px 20px;
+            margin: 0 0px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #eee;
+            color: rgb(27, 26, 26);
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        /* Fade-in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="main">
+           <a href="demo.html"> <button class="back"><i class="ri-arrow-left-line"></i></button></a>
+            <div class="letter-display">
+                <h2 id="letter" class="animate">A</h2>
+                <p id="word" class="animate">A for Apple</p>
+                <img id="image" src="images/a.jpeg" alt="Letter Image" class="animate">
+            </div>
+
+            <div class="controls">
+                <button id="prevBtn"><i class="ri-arrow-left-line"></i></button>
+                <button id="nextBtn"><i class="ri-arrow-right-line"></i></button>
+                <button id="speakBtn"><i class="ri-volume-up-line"></i></button>
+                <button id="autoplayBtn"><i class="ri-play-fill"></i> Autoplay</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Alphabet data with images and words
+        const alphabet = [
+            { letter: 'A', word: 'A for Apple', image: 'images/a.jpeg' },
+            { letter: 'B', word: 'B for Ball', image: 'images/b.jpeg' },
+            { letter: 'C', word: 'C for Cat', image: 'images/c.jpeg' },
+            { letter: 'D', word: 'D for Deer', image: 'images/d.jpeg' },
+            { letter: 'E', word: 'E for Egg', image: 'images/e.jpeg' },
+            { letter: 'F', word: 'F for Fish', image: 'images/f.jpeg' },
+            { letter: 'G', word: 'G for Grapes', image: 'images/g.jpeg' },
+            { letter: 'H', word: 'H for Hen', image: 'images/h.jpeg' },
+            { letter: 'I', word: 'I for Ice cream', image: 'images/i.jpeg' },
+            { letter: 'J', word: 'J for Jug', image: 'images/j.jpeg' },
+            { letter: 'K', word: 'K for Kite', image: 'images/k.png' },
+            { letter: 'L', word: 'L for Lion', image: 'images/l.jpeg' },
+            { letter: 'M', word: 'M for Mango', image: 'images/m.jpeg' },
+            { letter: 'N', word: 'N for Nest', image: 'images/n.jpeg' },
+            { letter: 'O', word: 'O for Orange', image: 'images/o.jpeg' },
+            { letter: 'P', word: 'P for Parrot', image: 'images/p.jpeg' },
+            { letter: 'Q', word: 'Q for Queen', image: 'images/q.jpeg' },
+            { letter: 'R', word: 'R for Rabbit', image: 'images/r.jpeg' },
+            { letter: 'S', word: 'S for Ship', image: 'images/s.jpeg' },
+            { letter: 'T', word: 'T for Tiger', image: 'images/t.jpeg' },
+            { letter: 'U', word: 'U for Umbrella', image: 'images/u.jpeg' },
+            { letter: 'V', word: 'V for Van', image: 'images/v.jpeg' },
+            { letter: 'W', word: 'W for Watch', image: 'images/w.jpeg' },
+            { letter: 'X', word: 'X for Xylophone', image: 'images/x.jpeg' },
+            { letter: 'Y', word: 'Y for Yacht', image: 'images/yatch.jpeg' },
+            { letter: 'Z', word: 'Z for Zebra', image: 'images/z.jpeg' }
+        ];
+
+        let currentIndex = 0;
+        let autoplayInterval; // Variable to store the interval for autoplay
+        let isAutoplaying = false; // Track whether autoplay is active
+
+        // HTML elements
+        const letterElement = document.getElementById('letter');
+        const wordElement = document.getElementById('word');
+        const imageElement = document.getElementById('image');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const speakBtn = document.getElementById('speakBtn');
+        const autoplayBtn = document.getElementById('autoplayBtn');
+
+        // Function to update the displayed letter, word, and image
+        function updateDisplay() {
+            // Reset animations
+            letterElement.classList.remove('animate');
+            wordElement.classList.remove('animate');
+            imageElement.classList.remove('animate');
+
+            // Delay to allow for animation reset
+            setTimeout(() => {
+                letterElement.textContent = alphabet[currentIndex].letter;
+                wordElement.textContent = alphabet[currentIndex].word;
+                imageElement.src = alphabet[currentIndex].image;
+
+                // Re-add animation class
+                letterElement.classList.add('animate');
+                wordElement.classList.add('animate');
+                imageElement.classList.add('animate');
+            }, 100);  // Timeout to trigger CSS animation restart
+        }
+
+        // Function to handle speech synthesis
+        function speakText(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.8;  // Adjusting speech speed
+
+            // Set voice to a female voice if available
+            const voices = speechSynthesis.getVoices();
+            const femaleVoices = voices.filter(voice => voice.name.includes('Google US English') || voice.name.includes('female'));
+            if (femaleVoices.length > 0) {
+                utterance.voice = femaleVoices[0]; // Choose the first female voice
+            }
+
+            speechSynthesis.speak(utterance);
+        }
+
+        // Event listeners for buttons
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < alphabet.length - 1) {
+                currentIndex++;
+                updateDisplay();
+                speakText(alphabet[currentIndex].word);  // Speak when changing letters
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateDisplay();
+                speakText(alphabet[currentIndex].word);  // Speak when changing letters
+            }
+        });
+
+        speakBtn.addEventListener('click', () => {
+            speakText(alphabet[currentIndex].word);
+        });
+
+        // Autoplay function
+        function startAutoplay() {
+            isAutoplaying = true;
+            autoplayBtn.innerHTML = '<i class="ri-pause-fill"></i> Pause';  // Change button to pause
+            autoplayInterval = setInterval(() => {
+                if (currentIndex < alphabet.length - 1) {
+                    currentIndex++;
+                } else {
+                    currentIndex = 0; // Reset to start after reaching the end
+                }
+                updateDisplay();
+                speakText(alphabet[currentIndex].word);  // Speak the word
+            }, 2600);  // Change letter every 2 seconds
+        }
+
+        // Stop autoplay function
+        function stopAutoplay() {
+            isAutoplaying = false;
+            clearInterval(autoplayInterval);
+            autoplayBtn.innerHTML = '<i class="ri-play-fill"></i> Autoplay';  // Change button back to autoplay
+        }
+
+        autoplayBtn.addEventListener('click', () => {
+            if (isAutoplaying) {
+                stopAutoplay();
+            } else {
+                startAutoplay();
+            }
+        });
+
+        // Initial display
+        updateDisplay();
+    </script>
+</body>
+</html>

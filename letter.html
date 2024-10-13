@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABCD Game for Kids</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f8ff;
+        }
+
+        .game-container {
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .letters-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 10px 0;
+            overflow-y: scroll;
+        }
+
+        .letter {
+            font-size: 70px;
+            margin: 10px;
+            transition: transform 0.3s ease, color 0.5s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #333;
+            width: 100px;
+            height: 100px;
+        }
+
+        .letter:hover {
+            transform: scale(1.2);
+            color: #FF5733; /* Change color on hover */
+        }
+
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .controls button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .controls button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>L E T T E R S</h1>
+        </div>
+        <div class="letters-container" id="lettersContainer"></div>
+
+        <div class="controls">
+            <button id="speakBtn"><i class="ri-volume-up-line"></i> Speak</button>
+            <button id="autoplayBtn"><i class="ri-play-fill"></i> Autoplay</button>
+        </div>
+    </div>
+
+    <script>
+        // Array of letters from A to Z
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+        const colors = [
+            '#FF5733', '#33FF57', '#3357FF', '#F1C40F', '#8E44AD', 
+            '#E67E22', '#1ABC9C', '#2C3E50', '#D35400', '#2980B9',
+            '#8E44AD', '#FF1493', '#00FF7F', '#FF4500', '#DA70D6', 
+            '#FF6347', '#7FFF00', '#FFD700', '#6A5ACD', '#00BFFF',
+            '#FF69B4', '#CD5C5C', '#4682B4', '#F08080', '#ADFF2F'
+        ];
+
+        let autoplayInterval; // Variable to store the interval for autoplay
+        let isAutoplaying = false;
+
+        // Function to create letter elements
+        function createLetterElements() {
+            const container = document.getElementById('lettersContainer');
+            alphabet.forEach((letter, index) => {
+                const letterDiv = document.createElement('div');
+                letterDiv.className = 'letter';
+                letterDiv.innerText = letter;
+                letterDiv.style.color = colors[index % colors.length]; // Assign colors
+
+                // Add event listener for speaking
+                letterDiv.addEventListener('click', () => {
+                    speakLetter(letter);
+                });
+
+                container.appendChild(letterDiv);
+            });
+        }
+
+        // Function to speak a letter
+        function speakLetter(letter) {
+            const utterance = new SpeechSynthesisUtterance(letter);
+            speechSynthesis.speak(utterance);
+        }
+
+        // Autoplay function
+        document.getElementById('autoplayBtn').addEventListener('click', () => {
+            if (isAutoplaying) {
+                clearInterval(autoplayInterval);
+                isAutoplaying = false;
+                document.getElementById('autoplayBtn').innerHTML = '<i class="ri-play-fill"></i> Autoplay';
+            } else {
+                isAutoplaying = true;
+                document.getElementById('autoplayBtn').innerHTML = '<i class="ri-stop-fill"></i> Stop Autoplay';
+                let currentIndex = 0;
+
+                autoplayInterval = setInterval(() => {
+                    if (currentIndex < alphabet.length) {
+                        speakLetter(alphabet[currentIndex]);
+                        currentIndex++;
+                    } else {
+                        clearInterval(autoplayInterval);
+                        isAutoplaying = false;
+                        document.getElementById('autoplayBtn').innerHTML = '<i class="ri-play-fill"></i> Autoplay'; // Reset button
+                    }
+                }, 2000); // Change letter every 2 seconds
+            }
+        });
+
+        // Create letters on initial load
+        createLetterElements();
+    </script>
+</body>
+</html>
